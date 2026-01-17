@@ -102,6 +102,52 @@ cargo build --release
 sudo cp target/release/fr /usr/local/bin/
 ```
 
+### Uninstalling
+
+Need to remove Ferret from your system? Here's how:
+
+#### **Via Cargo**
+```bash
+cargo uninstall ferret-rs
+```
+
+#### **Arch Linux (AUR)**
+```bash
+yay -R ferret-rs
+# or
+paru -R ferret-rs
+# or using pacman directly
+sudo pacman -R ferret-rs
+```
+
+#### **macOS (Homebrew)**
+```bash
+brew uninstall ferret-rs
+# or
+brew remove ferret-rs
+```
+
+#### **From Source (Manual Installation)**
+```bash
+# Remove the binary
+sudo rm /usr/local/bin/fr
+
+# Optional: Clean up the source directory
+rm -rf ~/path/to/Ferret
+```
+
+#### **Clean Cargo Cache (Optional)**
+If you want to completely remove all traces including cached builds:
+```bash
+# Remove cargo cache for ferret-rs
+rm -rf ~/.cargo/registry/cache/*/ferret-rs*
+rm -rf ~/.cargo/registry/src/*/ferret-rs*
+
+# Remove build artifacts from source directory
+cd ~/path/to/Ferret
+cargo clean
+```
+
 ---
 
 ## Usage Guide & Quick Reference
