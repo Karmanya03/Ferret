@@ -1,7 +1,7 @@
 [package]
 name = "ferret"
-version = "0.1.0"
-edition = "2021"
+version = "0.0.1"
+edition = "2024"
 authors = ["Ferret Contributors"]
 description = "A blazingly fast file finder and organizer for Linux/Unix systems with netcat-style combined flags"
 license = "MIT"
