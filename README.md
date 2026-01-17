@@ -34,23 +34,22 @@ No PhD required. Just `fr find "*.whatever"` and get on with your life.
 Pick your poison:
 
 #### **Via Cargo (Recommended - Works Everywhere)**
+
+**🚀 One-Command Install with Auto PATH Setup:**
 ```bash
-cargo install ferret-rs
+curl -fsSL https://raw.githubusercontent.com/Karmanya03/Ferret/main/install.sh | bash
 ```
+*The installer will ask if you want cargo install (with auto PATH setup) or system-wide install.*
 
-**Note:** After installation, make sure `~/.cargo/bin` is in your PATH. If `fr` command is not found, add this to your shell config:
-
+**Or manual cargo install:**
 ```bash
-# For Bash (~/.bashrc)
-echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+# 1. Install
+cargo install ferret-rs
+
+# 2. Add to PATH
+export PATH="$HOME/.cargo/bin:$PATH"
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc  # or ~/.zshrc
 source ~/.bashrc
-
-# For Zsh (~/.zshrc)
-echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-
-# For Fish (~/.config/fish/config.fish)
-fish_add_path $HOME/.cargo/bin
 ```
 
 #### **Arch Linux (AUR)**
@@ -86,6 +85,34 @@ sudo cp target/release/fr /usr/local/bin/
 - Rust 1.70 or newer (for cargo install or building from source)
 - A Linux/Unix box (Arch, Ubuntu, Kali, Debian, Fedora - whatever floats your boat)
 - Basic understanding that `sudo` means business
+
+### Troubleshooting
+
+#### "fr: command not found" after cargo install
+
+This means `~/.cargo/bin` isn't in your PATH. Here's the fix:
+
+**Quick Fix:**
+```bash
+# Run the automated installer (it handles PATH setup)
+curl -fsSL https://raw.githubusercontent.com/Karmanya03/Ferret/main/install.sh | bash
+```
+
+**Or manually:**
+```bash
+# Check if the binary exists
+ls -la ~/.cargo/bin/fr
+
+# If it's there, add to PATH
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc  # or ~/.zshrc
+source ~/.bashrc
+```
+
+**Verify it worked:**
+```bash
+which fr          # Should show: /home/username/.cargo/bin/fr
+fr --version      # Should show: fr 0.1.0
+```
 
 ### Upgrading
 
