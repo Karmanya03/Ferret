@@ -72,6 +72,36 @@ sudo cp target/release/fr /usr/local/bin/
 - A Linux/Unix box (Arch, Ubuntu, Kali, Debian, Fedora - whatever floats your boat)
 - Basic understanding that `sudo` means business
 
+### Upgrading
+
+Already have Ferret installed? Here's how to upgrade to the latest version:
+
+#### **Via Cargo**
+```bash
+cargo install ferret --force
+```
+
+#### **Arch Linux (AUR)**
+```bash
+yay -Syu ferret
+# or
+paru -Syu ferret
+```
+
+#### **macOS (Homebrew)**
+```bash
+brew update
+brew upgrade ferret
+```
+
+#### **From Source**
+```bash
+cd Ferret
+git pull origin main
+cargo build --release
+sudo cp target/release/fr /usr/local/bin/
+```
+
 ---
 
 ## Usage Guide & Quick Reference
