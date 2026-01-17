@@ -194,27 +194,21 @@ impl SearchCommand {
         if let Ok(metadata) = entry.metadata() {
             let size = metadata.len();
 
-            if let Some(min) = min_size {
-                if size < min {
-                    return false;
-                }
+            if let Some(min) = min_size && size < min {
+                return false;
             }
 
-            if let Some(max) = max_size {
-                if size > max {
-                    return false;
-                }
+            if let Some(max) = max_size && size > max {
+                return false;
             }
 
             // Modified time filter
-            if let Some(days) = self.modified_days {
-                if let Ok(modified) = metadata.modified() {
-                    if let Ok(duration) = SystemTime::now().duration_since(modified) {
-                        if duration.as_secs() > days * 86400 {
-                            return false;
-                        }
-                    }
-                }
+            if let Some(days) = self.modified_days
+                && let Ok(modified) = metadata.modified()
+                && let Ok(duration) = SystemTime::now().duration_since(modified)
+                && duration.as_secs() > days * 86400
+            {
+                return false;
             }
         }
 
