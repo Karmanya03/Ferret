@@ -35,14 +35,14 @@ Pick your poison:
 
 #### **Via Cargo (Recommended - Works Everywhere)**
 ```bash
-cargo install ferret
+cargo install ferret-rs
 ```
 
 #### **Arch Linux (AUR)**
 ```bash
-yay -S ferret
+yay -S ferret-rs
 # or
-paru -S ferret
+paru -S ferret-rs
 ```
 
 #### **macOS (Homebrew)**
@@ -78,14 +78,14 @@ Already have Ferret installed? Here's how to upgrade to the latest version:
 
 #### **Via Cargo**
 ```bash
-cargo install ferret --force
+cargo install ferret-rs --force
 ```
 
 #### **Arch Linux (AUR)**
 ```bash
-yay -Syu ferret
+yay -Syu ferret-rs
 # or
-paru -Syu ferret
+paru -Syu ferret-rs
 ```
 
 #### **macOS (Homebrew)**

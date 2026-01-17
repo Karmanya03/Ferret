@@ -3,7 +3,7 @@
 ## ✅ What's Been Done
 
 1. **Fixed terminal width truncation** - File paths now display fully based on your terminal width
-2. **Updated Cargo.toml** - Package name is now `ferret` (version 1.1.2) ready for crates.io
+2. **Updated Cargo.toml** - Package name is now `ferret-rs` (version 0.1.0) ready for crates.io
 3. **Created Homebrew formula** - Located in `homebrew/ferret.rb`
 4. **Created AUR PKGBUILD** - Located in `aur/PKGBUILD`
 5. **Updated README** - Added multiple installation methods
@@ -28,8 +28,8 @@ Before setting up AUR or Homebrew, create a release:
 
 ```bash
 # Tag the release
-git tag v1.1.2
-git push origin v1.1.2
+git tag v0.1.0
+git push origin v0.1.0
 
 # Then go to GitHub and create a release from the tag
 # https://github.com/Karmanya03/Ferret/releases/new
@@ -41,8 +41,8 @@ After creating the GitHub release:
 
 ```bash
 # Get the sha256 of your release tarball
-wget https://github.com/Karmanya03/Ferret/archive/v1.1.2.tar.gz
-sha256sum v1.1.2.tar.gz
+wget https://github.com/Karmanya03/Ferret/archive/v0.1.0.tar.gz
+sha256sum v0.1.0.tar.gz
 
 # Update aur/PKGBUILD:
 # - Line 2: Change maintainer to your info
@@ -58,7 +58,7 @@ cp PKGBUILD ferret-aur/
 cd ferret-aur/
 makepkg --printsrcinfo > .SRCINFO
 git add PKGBUILD .SRCINFO
-git commit -m "Initial commit: ferret 1.1.2"
+git commit -m "Initial commit: ferret-rs 0.1.0"
 git push
 ```
 
@@ -70,8 +70,8 @@ After creating the GitHub release:
 
 ```bash
 # Get the sha256
-wget https://github.com/Karmanya03/Ferret/archive/refs/tags/v1.1.2.tar.gz
-shasum -a 256 v1.1.2.tar.gz
+wget https://github.com/Karmanya03/Ferret/archive/refs/tags/v0.1.0.tar.gz
+shasum -a 256 v0.1.0.tar.gz
 
 # Update homebrew/ferret.rb line 5 with the sha256
 
@@ -91,18 +91,18 @@ Once you complete the steps above:
 
 **Cargo (All platforms):**
 ```bash
-cargo install ferret
+cargo install ferret-rs
 ```
 
 **Arch Linux:**
 ```bash
-yay -S ferret
+yay -S ferret-rs
 ```
 
 **macOS:**
 ```bash
 brew tap Karmanya03/ferret
-brew install ferret
+brew install ferret-rs
 ```
 
 **From source (still works):**

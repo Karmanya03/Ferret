@@ -5,7 +5,7 @@
 ### Step 1: Publish to Cargo (5 minutes)
 ```bash
 cargo login                    # Get token from crates.io/me
-cargo publish                  # Users can now: cargo install ferret
+cargo publish                  # Users can now: cargo install ferret-rs
 ```
 ✅ **Done!** Most Rust users can now install your tool.
 
@@ -13,11 +13,11 @@ cargo publish                  # Users can now: cargo install ferret
 
 ### Step 2: Create GitHub Release (2 minutes)
 ```bash
-git tag v1.1.2
-git push origin v1.1.2
+git tag v0.1.0
+git push origin v0.1.0
 ```
 Then go to: https://github.com/Karmanya03/Ferret/releases/new
-- Select tag `v1.1.2`
+- Select tag `v0.1.0`
 - Click "Publish release"
 
 ---
@@ -26,8 +26,8 @@ Then go to: https://github.com/Karmanya03/Ferret/releases/new
 
 1. **Get sha256 sum:**
 ```bash
-wget https://github.com/Karmanya03/Ferret/archive/v1.1.2.tar.gz
-sha256sum v1.1.2.tar.gz
+wget https://github.com/Karmanya03/Ferret/archive/v0.1.0.tar.gz
+sha256sum v0.1.0.tar.gz
 ```
 
 2. **Update `aur/PKGBUILD`:**
@@ -42,11 +42,11 @@ cp aur/PKGBUILD ferret-aur/
 cd ferret-aur/
 makepkg --printsrcinfo > .SRCINFO
 git add PKGBUILD .SRCINFO
-git commit -m "Initial commit: ferret 1.1.2"
+git commit -m "Initial commit: ferret-rs 0.1.0"
 git push
 ```
 
-✅ **Done!** Arch users can now: `yay -S ferret`
+✅ **Done!** Arch users can now: `yay -S ferret-rs`
 
 ---
 
@@ -54,8 +54,8 @@ git push
 
 1. **Get sha256 sum:**
 ```bash
-wget https://github.com/Karmanya03/Ferret/archive/refs/tags/v1.1.2.tar.gz
-shasum -a 256 v1.1.2.tar.gz
+wget https://github.com/Karmanya03/Ferret/archive/refs/tags/v0.1.0.tar.gz
+shasum -a 256 v0.1.0.tar.gz
 ```
 
 2. **Update `homebrew/ferret.rb`:**
@@ -75,7 +75,7 @@ git push
 ✅ **Done!** macOS users can now:
 ```bash
 brew tap Karmanya03/ferret
-brew install ferret
+brew install ferret-rs
 ```
 
 ---
@@ -83,7 +83,7 @@ brew install ferret
 ## 📝 Summary of Changes Made
 
 ### Files Modified:
-- ✅ `Cargo.toml` - Package name is now `ferret`, ready for crates.io
+- ✅ `Cargo.toml` - Package name is now `ferret-rs`, ready for crates.io
 - ✅ `src/utils.rs` - Fixed path truncation to use full terminal width
 - ✅ `README.md` - Added installation methods for cargo/AUR/Homebrew
 
@@ -100,9 +100,9 @@ brew install ferret
 
 | Platform | Command |
 |----------|---------|
-| **Any (with Rust)** | `cargo install ferret` |
-| **Arch Linux** | `yay -S ferret` or `paru -S ferret` |
-| **macOS** | `brew tap Karmanya03/ferret && brew install ferret` |
+| **Any (with Rust)** | `cargo install ferret-rs` |
+| **Arch Linux** | `yay -S ferret-rs` or `paru -S ferret-rs` |
+| **macOS** | `brew tap Karmanya03/ferret && brew install ferret-rs` |
 | **From Source** | `git clone ... && cargo build --release` |
 
 ---

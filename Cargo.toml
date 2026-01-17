@@ -1,6 +1,6 @@
 [package]
-name = "ferret"
-version = "1.1.2"
+name = "ferret-rs"
+version = "0.1.0"
 edition = "2024"
 authors = ["Karmanya03 <karmanya03@proton.me>"]
 description = "A blazingly fast file finder and organizer for Linux/Unix systems with netcat-style combined flags"

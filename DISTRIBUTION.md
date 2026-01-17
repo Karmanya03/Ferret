@@ -27,12 +27,12 @@ This guide explains how to publish Ferret to various package managers so users c
 
 4. **Users can now install via:**
    ```bash
-   cargo install ferret
+   cargo install ferret-rs
    ```
 
 **Notes:**
-- Package name: `ferret`
-- Version: 1.1.2
+- Package name: `ferret-rs`
+- Version: 0.1.0
 - The binary is called `fr` (configured in Cargo.toml)
 - Once published, you can't unpublish (only yank versions)
 
@@ -48,17 +48,17 @@ The PKGBUILD file is located in `aur/PKGBUILD`.
 
 1. **Create a GitHub release first**
    - Go to: https://github.com/Karmanya03/Ferret/releases/new
-   - Tag: `v1.1.2`
+   - Tag: `v0.1.0`
    - Upload the release
    - Copy the tar.gz URL
 
 2. **Update the PKGBUILD sha256sum**
    ```bash
    # Download the release tarball
-   wget https://github.com/Karmanya03/Ferret/archive/v1.1.2.tar.gz
+   wget https://github.com/Karmanya03/Ferret/archive/v0.1.0.tar.gz
    
    # Generate sha256
-   sha256sum v1.1.2.tar.gz
+   sha256sum v0.1.0.tar.gz
    
    # Update sha256sums=('...') in PKGBUILD with the output
    ```
@@ -81,15 +81,15 @@ The PKGBUILD file is located in `aur/PKGBUILD`.
    
    # Commit and push
    git add PKGBUILD .SRCINFO
-   git commit -m "Initial commit: ferret 1.1.2"
+   git commit -m "Initial commit: ferret-rs 0.1.0"
    git push
    ```
 
 5. **Users can now install via:**
    ```bash
-   yay -S ferret
+   yay -S ferret-rs
    # or
-   paru -S ferret
+   paru -S ferret-rs
    ```
 
 **Requirements:**
@@ -114,10 +114,10 @@ The formula is located in `homebrew/ferret.rb`.
 2. **Update the formula sha256**
    ```bash
    # Download the release tarball
-   wget https://github.com/Karmanya03/Ferret/archive/refs/tags/v1.1.2.tar.gz
+   wget https://github.com/Karmanya03/Ferret/archive/refs/tags/v0.1.0.tar.gz
    
    # Generate sha256
-   shasum -a 256 v1.1.2.tar.gz
+   shasum -a 256 v0.1.0.tar.gz
    
    # Update sha256 in homebrew/ferret.rb
    ```
@@ -144,7 +144,7 @@ The formula is located in `homebrew/ferret.rb`.
    brew tap Karmanya03/ferret
    
    # Install
-   brew install ferret
+   brew install ferret-rs
    ```
 
 **Alternative - Submit to Homebrew Core:**
@@ -187,7 +187,7 @@ The formula is located in `homebrew/ferret.rb`.
 
 4. **Users install via:**
    ```bash
-   sudo dpkg -i ferret_1.1.2_amd64.deb
+   sudo dpkg -i ferret-rs_0.1.0_amd64.deb
    ```
 
 ---
@@ -202,7 +202,7 @@ When releasing a new version:
 - [ ] Update CHANGELOG.md
 - [ ] Test build locally: `cargo build --release`
 - [ ] Run tests: `cargo test`
-- [ ] Create GitHub release with tag (e.g., `v1.1.2`)
+- [ ] Create GitHub release with tag (e.g., `v0.1.0`)
 - [ ] Update sha256sums in PKGBUILD and Homebrew formula
 - [ ] Publish to crates.io: `cargo publish`
 - [ ] Update AUR repository
@@ -214,8 +214,8 @@ When releasing a new version:
 
 1. **Create GitHub Release:**
    ```bash
-   git tag v1.1.2
-   git push origin v1.1.2
+   git tag v0.1.0
+   git push origin v0.1.0
    ```
    Then create release on GitHub
 
@@ -236,9 +236,9 @@ When releasing a new version:
 
 | Platform | Method | Status | Users Install Via |
 |----------|--------|--------|-------------------|
-| Any (with Rust) | Cargo | ✅ Ready | `cargo install ferret` |
-| Arch Linux | AUR | ✅ Ready | `yay -S ferret` |
-| macOS | Homebrew | ✅ Ready | `brew install ferret` |
+| Any (with Rust) | Cargo | ✅ Ready | `cargo install ferret-rs` |
+| Arch Linux | AUR | ✅ Ready | `yay -S ferret-rs` |
+| macOS | Homebrew | ✅ Ready | `brew install ferret-rs` |
 | Ubuntu/Debian | .deb | ⚠️ Optional | `dpkg -i ferret.deb` |
 | From Source | Git | ✅ Ready | `git clone && cargo build` |
 
