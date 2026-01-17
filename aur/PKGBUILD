@@ -1,6 +1,6 @@
-# Maintainer: Your Name <your.email@example.com>
+# Maintainer: Karmanya03 <karmanya03@proton.me>
 pkgname=ferret
-pkgver=0.0.1
+pkgver=1.1.2
 pkgrel=1
 pkgdesc="A blazingly fast file finder and organizer for Unix systems"
 arch=('x86_64')

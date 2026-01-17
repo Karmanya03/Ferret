@@ -13,11 +13,11 @@ cargo publish                  # Users can now: cargo install ferret
 
 ### Step 2: Create GitHub Release (2 minutes)
 ```bash
-git tag v0.0.1
-git push origin v0.0.1
+git tag v1.1.2
+git push origin v1.1.2
 ```
 Then go to: https://github.com/Karmanya03/Ferret/releases/new
-- Select tag `v0.0.1`
+- Select tag `v1.1.2`
 - Click "Publish release"
 
 ---
@@ -26,8 +26,8 @@ Then go to: https://github.com/Karmanya03/Ferret/releases/new
 
 1. **Get sha256 sum:**
 ```bash
-wget https://github.com/Karmanya03/Ferret/archive/v0.0.1.tar.gz
-sha256sum v0.0.1.tar.gz
+wget https://github.com/Karmanya03/Ferret/archive/v1.1.2.tar.gz
+sha256sum v1.1.2.tar.gz
 ```
 
 2. **Update `aur/PKGBUILD`:**
@@ -42,7 +42,7 @@ cp aur/PKGBUILD ferret-aur/
 cd ferret-aur/
 makepkg --printsrcinfo > .SRCINFO
 git add PKGBUILD .SRCINFO
-git commit -m "Initial commit: ferret 0.0.1"
+git commit -m "Initial commit: ferret 1.1.2"
 git push
 ```
 
@@ -54,8 +54,8 @@ git push
 
 1. **Get sha256 sum:**
 ```bash
-wget https://github.com/Karmanya03/Ferret/archive/refs/tags/v0.0.1.tar.gz
-shasum -a 256 v0.0.1.tar.gz
+wget https://github.com/Karmanya03/Ferret/archive/refs/tags/v1.1.2.tar.gz
+shasum -a 256 v1.1.2.tar.gz
 ```
 
 2. **Update `homebrew/ferret.rb`:**

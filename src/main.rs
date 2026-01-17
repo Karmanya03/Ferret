@@ -13,7 +13,7 @@ use search::SearchCommand;
 #[derive(Parser)]
 #[command(name = "fr")]
 #[command(author = "Ferret")]
-#[command(version = "0.0.1")]
+#[command(version = "1.1.2")]
 #[command(about = "Ferret - Fast file finder and organizer for Linux/Unix systems", long_about = None)]
 struct Cli {
     #[command(subcommand)]

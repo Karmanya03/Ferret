@@ -1,8 +1,8 @@
 [package]
 name = "ferret"
-version = "0.0.1"
+version = "1.1.2"
 edition = "2024"
-authors = ["Ferret Contributors"]
+authors = ["Karmanya03 <karmanya03@proton.me>"]
 description = "A blazingly fast file finder and organizer for Linux/Unix systems with netcat-style combined flags"
 license = "MIT"
 repository = "https://github.com/Karmanya03/Ferret"
