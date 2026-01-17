@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use chrono::{DateTime, Datelike, Local};
 use colored::*;
 use std::collections::HashMap;
@@ -26,8 +26,8 @@ impl OrganizeCommand {
         if !source_path.exists() {
             return Err(anyhow!("Path does not exist: {}", self.path));
         }
-// Determine output directory
-        
+        // Determine output directory
+
         let output_base = self
             .output
             .as_ref()
@@ -185,8 +185,8 @@ impl OrganizeCommand {
 
         Ok(())
     }
-// Figure out what category a file belongs to based on extension
-    
+    // Figure out what category a file belongs to based on extension
+
     fn categorize_file(&self, path: &Path) -> String {
         let extension = path
             .extension()
@@ -241,7 +241,7 @@ impl OrganizeCommand {
             // Other
             "" => "no-extension".to_string(),
             _ => format!("{}-files", extension),
-    // Either move or copy a file (depending on settings)
+            // Either move or copy a file (depending on settings)
         }
     }
 
@@ -297,7 +297,7 @@ impl OrganizeCommand {
             );
         }
 
-    // Add numbers to filename if it already exists (_1, _2, etc)
+        // Add numbers to filename if it already exists (_1, _2, etc)
         Ok(())
     }
 

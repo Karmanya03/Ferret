@@ -251,7 +251,7 @@ impl SearchCommand {
 
     fn display_detailed(&self, results: &[DirEntry]) -> Result<()> {
         use chrono::{DateTime, Local};
-        use humansize::{format_size, BINARY};
+        use humansize::{BINARY, format_size};
 
         for entry in results {
             let path = entry.path();

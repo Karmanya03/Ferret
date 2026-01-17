@@ -1,6 +1,6 @@
 use anyhow::Result;
 use colored::*;
-use humansize::{format_size, BINARY};
+use humansize::{BINARY, format_size};
 use std::collections::HashMap;
 use std::path::Path;
 use walkdir::WalkDir;
@@ -111,7 +111,7 @@ pub fn show_stats(path: &str, recursive: bool, hidden: bool, verbose: bool) -> R
 
     // Display top file types
     let mut ext_vec: Vec<_> = extension_stats.iter().collect();
-    ext_vec.sort_by(|a, b| b.1 .0.cmp(&a.1 .0)); // Sort by count descending
+    ext_vec.sort_by(|a, b| b.1.0.cmp(&a.1.0)); // Sort by count descending
 
     println!("\n{}", "Top File Types:".green().bold());
     println!("  {:<20} {:>10} {:>15}", "Extension", "Count", "Total Size");
