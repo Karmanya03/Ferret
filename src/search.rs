@@ -194,11 +194,15 @@ impl SearchCommand {
         if let Ok(metadata) = entry.metadata() {
             let size = metadata.len();
 
-            if let Some(min) = min_size && size < min {
+            if let Some(min) = min_size
+                && size < min
+            {
                 return false;
             }
 
-            if let Some(max) = max_size && size > max {
+            if let Some(max) = max_size
+                && size > max
+            {
                 return false;
             }
 
