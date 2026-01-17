@@ -3,6 +3,7 @@ use colored::*;
 use humansize::{BINARY, format_size};
 use std::collections::HashMap;
 use std::path::Path;
+use terminal_size::{Width, terminal_size};
 use walkdir::WalkDir;
 
 // Show detailed statistics about a directory
@@ -146,15 +147,24 @@ pub fn show_stats(path: &str, recursive: bool, hidden: bool, verbose: bool) -> R
 
     file_sizes.sort_by(|a, b| b.1.cmp(&a.1));
 
-    println!("  {:<60} {:>15}", "File", "Size");
-    println!("  {}", "─".repeat(75).bright_black());
+    // Get terminal width for dynamic column sizing
+    let term_width = terminal_size()
+        .map(|(Width(w), _)| w as usize)
+        .unwrap_or(80);
+    
+    // Reserve 20 chars for size column and spacing
+    let path_width = term_width.saturating_sub(20).max(40);
+    
+    println!("  {:<width$} {:>15}", "File", "Size", width = path_width);
+    println!("  {}", "─".repeat(term_width.saturating_sub(2)).bright_black());
 
     for (path, size) in file_sizes.iter().take(10) {
-        let display_path = path.strip_prefix(source_path).unwrap_or(path).display();
+        let display_path = path.strip_prefix(source_path).unwrap_or(path).display().to_string();
         println!(
-            "  {:<60} {:>15}",
-            display_path.to_string().truncate_with_ellipsis(58),
-            format_size(*size, BINARY).yellow()
+            "  {:<width$} {:>15}",
+            display_path,
+            format_size(*size, BINARY).yellow(),
+            width = path_width
         );
     }
 
@@ -178,20 +188,6 @@ fn create_bar(value: u64, max: u64, width: usize) -> String {
     )
 }
 
-trait StringExt {
-    fn truncate_with_ellipsis(&self, max_len: usize) -> String;
-}
-
-impl StringExt for String {
-    fn truncate_with_ellipsis(&self, max_len: usize) -> String {
-        if self.len() <= max_len {
-            self.clone()
-        } else {
-            format!("{}...", &self[..max_len.saturating_sub(3)])
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -200,11 +196,5 @@ mod tests {
     fn test_create_bar() {
         let bar = create_bar(50, 100, 10);
         assert_eq!(bar.chars().filter(|c| *c == '█').count(), 5);
-    }
-
-    #[test]
-    fn test_truncate() {
-        let long_string = "This is a very long string".to_string();
-        assert_eq!(long_string.truncate_with_ellipsis(10), "This is...");
     }
 }

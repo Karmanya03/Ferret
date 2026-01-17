@@ -1,0 +1,37 @@
+# Maintainer: Your Name <your.email@example.com>
+pkgname=ferret
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="A blazingly fast file finder and organizer for Unix systems"
+arch=('x86_64')
+url="https://github.com/Karmanya03/Ferret"
+license=('MIT')
+depends=()
+makedepends=('rust' 'cargo')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
+sha256sums=('SKIP') # Update this after creating a release
+
+prepare() {
+    cd "$srcdir/Ferret-$pkgver"
+    cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+}
+
+build() {
+    cd "$srcdir/Ferret-$pkgver"
+    export RUSTUP_TOOLCHAIN=stable
+    export CARGO_TARGET_DIR=target
+    cargo build --frozen --release --all-features
+}
+
+check() {
+    cd "$srcdir/Ferret-$pkgver"
+    export RUSTUP_TOOLCHAIN=stable
+    cargo test --frozen --all-features
+}
+
+package() {
+    cd "$srcdir/Ferret-$pkgver"
+    install -Dm755 "target/release/fr" "$pkgdir/usr/bin/fr"
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}

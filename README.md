@@ -31,6 +31,30 @@ No PhD required. Just `fr find "*.whatever"` and get on with your life.
 
 ### Installation
 
+Pick your poison:
+
+#### **Via Cargo (Recommended - Works Everywhere)**
+```bash
+cargo install ferret
+```
+
+#### **Arch Linux (AUR)**
+```bash
+yay -S ferret
+# or
+paru -S ferret
+```
+
+#### **macOS (Homebrew)**
+```bash
+# Add the tap (first time only)
+brew tap Karmanya03/ferret
+
+# Install
+brew install ferret
+```
+
+#### **From Source (The Hard Way)**
 ```bash
 # Clone it
 git clone https://github.com/Karmanya03/Ferret.git
@@ -44,7 +68,7 @@ sudo cp target/release/fr /usr/local/bin/
 ```
 
 **What you need:**
-- Rust 1.70 or newer
+- Rust 1.70 or newer (for cargo install or building from source)
 - A Linux/Unix box (Arch, Ubuntu, Kali, Debian, Fedora - whatever floats your boat)
 - Basic understanding that `sudo` means business
 
