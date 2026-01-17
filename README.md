@@ -38,6 +38,21 @@ Pick your poison:
 cargo install ferret-rs
 ```
 
+**Note:** After installation, make sure `~/.cargo/bin` is in your PATH. If `fr` command is not found, add this to your shell config:
+
+```bash
+# For Bash (~/.bashrc)
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# For Zsh (~/.zshrc)
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# For Fish (~/.config/fish/config.fish)
+fish_add_path $HOME/.cargo/bin
+```
+
 #### **Arch Linux (AUR)**
 ```bash
 yay -S ferret-rs
