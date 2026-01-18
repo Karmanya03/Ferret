@@ -1,11 +1,15 @@
-# Ferret v1.2.0 - New Features Summary
+# Ferret v0.1.1 - New Features Summary
 
-## ✅ All Errors Fixed
+## 📦 Version History
+- **v0.1.0** - Initial release with basic file finding, organizing, and stats
+- **v0.1.1** - Added pentesting features, ls command, and security tools
+
+## ✅ All Errors Fixed (v0.1.1)
 - Cross-platform compatibility implemented (Unix/Linux and Windows)
 - Conditional compilation for Unix-specific features
 - All compiler warnings resolved
 
-## 🆕 New Commands Added
+## 🆕 New Commands Added in v0.1.1
 
 ### 1. **fr ls** - Enhanced Directory Listing
 Like the classic `ls` command but with modern features:
@@ -251,7 +255,7 @@ fr writable /tmp     # Find writable files
 
 ## 🎓 For Pentesters
 
-Ferret v1.2.0 gives you:
+Ferret v0.1.1 gives you:
 - Quick privilege escalation enumeration
 - Credential hunting capabilities
 - System change monitoring
@@ -270,7 +274,7 @@ Perfect for:
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 0.1.1 (upgraded from v0.1.0)
 **Date:** January 18, 2026  
 **Status:** ✅ Production Ready  
 **Platform:** Windows, Linux, macOS, Unix
