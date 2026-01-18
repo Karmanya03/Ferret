@@ -1,4 +1,4 @@
-# Ferret
+# Ferret-rs
 
 Yeah, it's another file finder. But this one doesn't suck.
 
