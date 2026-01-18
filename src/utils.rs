@@ -195,6 +195,316 @@ fn create_bar(value: u64, max: u64, width: usize) -> String {
     )
 }
 
+/// List files in a directory (ls command)
+pub fn list_files(
+    path: &str,
+    show_all: bool,
+    long_format: bool,
+    recursive: bool,
+    human_readable: bool,
+    explain_perms: bool,
+) -> Result<()> {
+    use std::path::Path;
+
+    let source_path = Path::new(path);
+
+    if !source_path.exists() {
+        anyhow::bail!("Path does not exist: {}", path);
+    }
+
+    if recursive {
+        list_recursive(source_path, show_all, long_format, human_readable, explain_perms, 0)?;
+    } else {
+        list_directory(source_path, show_all, long_format, human_readable, explain_perms)?;
+    }
+
+    Ok(())
+}
+
+fn list_directory(
+    path: &Path,
+    show_all: bool,
+    long_format: bool,
+    human_readable: bool,
+    explain_perms: bool,
+) -> Result<()> {
+    use std::fs;
+
+    if path.is_file() {
+        if long_format {
+            print_long_entry(path, human_readable, explain_perms)?;
+        } else {
+            println!("{}", path.display());
+        }
+        return Ok(());
+    }
+
+    let mut entries: Vec<_> = fs::read_dir(path)?
+        .filter_map(|e| e.ok())
+        .collect();
+
+    entries.sort_by_key(|e| e.file_name());
+
+    for entry in entries {
+        let file_name = entry.file_name();
+        let name = file_name.to_string_lossy();
+
+        // Skip hidden files unless -a flag
+        if !show_all && name.starts_with('.') {
+            continue;
+        }
+
+        if long_format {
+            print_long_entry(&entry.path(), human_readable, explain_perms)?;
+        } else {
+            let metadata = entry.metadata()?;
+            if metadata.is_dir() {
+                println!("{}/", name.cyan().bold());
+            } else if metadata.is_symlink() {
+                println!("{}", name.purple());
+            } else {
+                #[cfg(unix)]
+                {
+                    use std::os::unix::fs::PermissionsExt;
+                    let mode = metadata.permissions().mode();
+                    if mode & 0o111 != 0 {
+                        println!("{}", name.green().bold());
+                    } else {
+                        println!("{}", name);
+                    }
+                }
+                #[cfg(not(unix))]
+                {
+                    println!("{}", name);
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn list_recursive(
+    path: &Path,
+    show_all: bool,
+    long_format: bool,
+    human_readable: bool,
+    explain_perms: bool,
+    depth: usize,
+) -> Result<()> {
+    use std::fs;
+
+    let indent = "  ".repeat(depth);
+
+    if path.is_file() {
+        if long_format {
+            print!("{}", indent);
+            print_long_entry(path, human_readable, explain_perms)?;
+        } else {
+            println!("{}{}", indent, path.file_name().unwrap().to_string_lossy());
+        }
+        return Ok(());
+    }
+
+    if depth == 0 {
+        println!("{}:", path.display().to_string().cyan().bold());
+    } else {
+        println!(
+            "{}{}:",
+            indent,
+            path.file_name().unwrap().to_string_lossy().cyan().bold()
+        );
+    }
+
+    let mut entries: Vec<_> = fs::read_dir(path)?
+        .filter_map(|e| e.ok())
+        .collect();
+
+    entries.sort_by_key(|e| e.file_name());
+
+    for entry in entries {
+        let file_name = entry.file_name();
+        let name = file_name.to_string_lossy();
+
+        // Skip hidden files unless -a flag
+        if !show_all && name.starts_with('.') {
+            continue;
+        }
+
+        let metadata = entry.metadata()?;
+
+        if long_format {
+            print!("{}", indent);
+            print_long_entry(&entry.path(), human_readable, explain_perms)?;
+        } else {
+            if metadata.is_dir() {
+                println!("{}{}/", indent, name.cyan().bold());
+            } else if metadata.is_symlink() {
+                println!("{}{}", indent, name.purple());
+            } else {
+                #[cfg(unix)]
+                {
+                    use std::os::unix::fs::PermissionsExt;
+                    let mode = metadata.permissions().mode();
+                    if mode & 0o111 != 0 {
+                        println!("{}{}", indent, name.green().bold());
+                    } else {
+                        println!("{}{}", indent, name);
+                    }
+                }
+                #[cfg(not(unix))]
+                {
+                    println!("{}{}", indent, name);
+                }
+            }
+        }
+
+        if metadata.is_dir() {
+            list_recursive(&entry.path(), show_all, long_format, human_readable, explain_perms, depth + 1)?;
+        }
+    }
+
+    Ok(())
+}
+
+fn print_long_entry(path: &Path, human_readable: bool, explain_perms: bool) -> Result<()> {
+    use chrono::{DateTime, Local};
+    use std::fs;
+
+    let metadata = fs::metadata(path)?;
+    let file_name = path.file_name().unwrap().to_string_lossy();
+
+    // Permissions
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mode = metadata.permissions().mode();
+        let perm_str = format_permissions(mode);
+        if explain_perms {
+            let perm_explain = explain_permissions(mode);
+            print!("{} {} ", perm_str, perm_explain.bright_black());
+        } else {
+            print!("{} ", perm_str);
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        if explain_perms {
+            if metadata.is_dir() {
+                print!("drwxr-xr-x (owner:rwx, group:r-x, other:r-x) ");
+            } else {
+                print!("-rw-r--r-- (owner:rw-, group:r--, other:r--) ");
+            }
+        } else {
+            if metadata.is_dir() {
+                print!("drwxr-xr-x ");
+            } else {
+                print!("-rw-r--r-- ");
+            }
+        }
+    }
+
+    // Size
+    let size = metadata.len();
+    if human_readable {
+        print!("{:>8} ", format_size(size, BINARY).cyan());
+    } else {
+        print!("{:>10} ", size.to_string().cyan());
+    }
+
+    // Modified time
+    if let Ok(modified) = metadata.modified() {
+        let datetime: DateTime<Local> = modified.into();
+        print!("{} ", datetime.format("%b %d %H:%M").to_string().yellow());
+    } else {
+        print!("            ");
+    }
+
+    // Name
+    if metadata.is_dir() {
+        println!("{}/", file_name.cyan().bold());
+    } else if metadata.is_symlink() {
+        println!("{}", file_name.purple());
+    } else {
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mode = metadata.permissions().mode();
+            if mode & 0o111 != 0 {
+                println!("{}", file_name.green().bold());
+            } else {
+                println!("{}", file_name);
+            }
+        }
+        #[cfg(not(unix))]
+        {
+            println!("{}", file_name);
+        }
+    }
+
+    Ok(())
+}
+
+#[cfg(unix)]
+fn format_permissions(mode: u32) -> String {
+    use std::os::unix::fs::PermissionsExt;
+    
+    let file_type = match mode & 0o170000 {
+        0o040000 => 'd',
+        0o120000 => 'l',
+        _ => '-',
+    };
+
+    let user = format!(
+        "{}{}{}",
+        if mode & 0o400 != 0 { 'r' } else { '-' },
+        if mode & 0o200 != 0 { 'w' } else { '-' },
+        if mode & 0o100 != 0 { 'x' } else { '-' }
+    );
+
+    let group = format!(
+        "{}{}{}",
+        if mode & 0o040 != 0 { 'r' } else { '-' },
+        if mode & 0o020 != 0 { 'w' } else { '-' },
+        if mode & 0o010 != 0 { 'x' } else { '-' }
+    );
+
+    let other = format!(
+        "{}{}{}",
+        if mode & 0o004 != 0 { 'r' } else { '-' },
+        if mode & 0o002 != 0 { 'w' } else { '-' },
+        if mode & 0o001 != 0 { 'x' } else { '-' }
+    );
+
+    format!("{}{}{}{}", file_type, user, group, other)
+}
+
+#[cfg(unix)]
+fn explain_permissions(mode: u32) -> String {
+    let user = format!(
+        "{}{}{}",
+        if mode & 0o400 != 0 { 'r' } else { '-' },
+        if mode & 0o200 != 0 { 'w' } else { '-' },
+        if mode & 0o100 != 0 { 'x' } else { '-' }
+    );
+
+    let group = format!(
+        "{}{}{}",
+        if mode & 0o040 != 0 { 'r' } else { '-' },
+        if mode & 0o020 != 0 { 'w' } else { '-' },
+        if mode & 0o010 != 0 { 'x' } else { '-' }
+    );
+
+    let other = format!(
+        "{}{}{}",
+        if mode & 0o004 != 0 { 'r' } else { '-' },
+        if mode & 0o002 != 0 { 'w' } else { '-' },
+        if mode & 0o001 != 0 { 'x' } else { '-' }
+    );
+
+    format!("(owner:{}, group:{}, other:{})", user, group, other)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

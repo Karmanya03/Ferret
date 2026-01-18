@@ -23,6 +23,8 @@ No PhD required. Just `fr find "*.whatever"` and get on with your life.
 
 **Directory Stats** - Shows you what's actually in that folder. With pretty charts because humans like pretty things.
 
+**Pentesting & Security Tools** - SUID/SGID finder, writable file scanner, capabilities checker, config hunter, and more. Built for pentesters, red teamers, and blue teamers.
+
 **Combined Flags** - Because if netcat can do `nc -nlvp`, you should be able to do `fr find "*.log" -ivH`. Flag combining works like you'd expect it to.
 
 **Output Options** - Default view, detailed with timestamps and sizes, or JSON if you're into that sort of thing.
@@ -264,6 +266,14 @@ fr find "*" -t symlink
 | `fr find PATTERN` | Find files matching pattern |
 | `fr organize PATH` | Clean up the mess |
 | `fr stats PATH` | See what's taking up space |
+| `fr ls PATH` | List directory contents (like ls) |
+| `fr suid` | Find SUID binaries (pentesting) |
+| `fr sgid` | Find SGID binaries (pentesting) |
+| `fr writable` | Find writable files/dirs (pentesting) |
+| `fr caps` | Find files with capabilities (pentesting) |
+| `fr configs` | Hunt for credentials/configs (pentesting) |
+| `fr recent` | Find recently modified files (pentesting) |
+| `fr dn CMD` | Run command with /dev/null redirect |
 
 **Common Find Patterns**
 
@@ -496,6 +506,410 @@ fr find "*.log" -m 30 -x "gzip {}"
 # Get total size (JSON + jq)
 fr find "*.mp4" -o json | jq '.[].size' | awk '{sum+=$1} END {print sum}'
 ```
+
+### Finding Space Hogs
+
+## 🔥 Pentesting & Security Features
+
+Ferret now includes powerful security enumeration tools designed for pentesters, red teamers, and blue teamers. All commands are short, fast, and designed for privilege escalation reconnaissance.
+
+### Quick Security Command Reference
+
+| Command | What It Does | Typical Usage |
+|---------|-------------|---------------|
+| `fr suid` | Find SUID binaries | Privilege escalation vectors |
+| `fr sgid` | Find SGID binaries | Group privilege escalation |
+| `fr writable` | Find world-writable files/dirs | Writable paths for exploitation |
+| `fr caps` | Find files with capabilities | Linux capabilities abuse |
+| `fr configs` | Find interesting config files | Credentials, keys, passwords |
+| `fr recent` | Find recently modified files | Detect recent system changes |
+| `fr dn` | Dev null helper | Easy output redirection |
+| `fr ls` | List directory contents | Like ls but with colors |
+
+### List Command (ls)
+
+Enhanced directory listing with color-coded output:
+
+```bash
+# List current directory
+fr ls
+
+# List with all files including hidden (like ls -a)
+fr ls -a
+
+# Long format with details (like ls -l)
+fr ls -l
+
+# Long format with human-readable sizes (like ls -lh)
+fr ls -lH
+
+# List recursively (like ls -R)
+fr ls -R
+
+# Combine flags (like ls -laR)
+fr ls -laR
+
+# List specific directory
+fr ls /etc
+
+# Full featured listing
+fr ls /var/log -laH
+```
+
+**Color coding:**
+- **Directories** - Cyan and bold
+- **Executable files** - Green and bold (Unix/Linux only)
+- **Symlinks** - Purple
+- **Regular files** - Default color
+
+**Flags:**
+- `-a` / `--all` - Show hidden files
+- `-l` / `--long` - Long format with permissions, size, date
+- `-R` / `--recursive` - List subdirectories recursively
+- `-H` / `--human` - Human-readable file sizes (KB, MB, GB)
+- `-e` / `--explain-perms` - Explain permissions (e.g., owner:rw-, group:r--, other:r--)
+
+**Examples with permission explanations:**
+```bash
+# Show detailed permission explanations
+fr ls -le           # Long format with explanations
+fr ls -lHe          # Long format, human sizes, with explanations
+fr ls -laHe         # All files, long format, human sizes, with explanations
+
+# Without explanations (default, cleaner output)
+fr ls -lH           # Just permissions symbols
+```
+
+### SUID Binary Scanner
+
+Find SUID binaries (run with owner's privileges) - essential for privilege escalation:
+
+```bash
+# Find all SUID binaries (classic)
+fr suid
+
+# Search from root (comprehensive scan)
+fr suid /
+
+# Quiet mode - just the paths (for scripts)
+fr suid -q
+
+# Verbose - show permissions
+fr suid -v
+
+# Save results to file
+fr suid -o suid_findings.txt
+
+# Search specific directory
+fr suid /usr/bin
+```
+
+**Equivalent to:**
+```bash
+find / -perm -4000 -type f 2>/dev/null
+find / -perm -u=s -type f 2>/dev/null
+```
+
+### SGID Binary Scanner
+
+Find SGID binaries (run with group's privileges):
+
+```bash
+# Find all SGID binaries
+fr sgid
+
+# Full system scan
+fr sgid /
+
+# Quiet mode
+fr sgid -q
+
+# With detailed permissions
+fr sgid -v
+
+# Save to file
+fr sgid -o sgid_findings.txt
+```
+
+**Equivalent to:**
+```bash
+find / -perm -2000 -type f 2>/dev/null
+find / -perm /2000 -type f 2>/dev/null
+```
+
+### World-Writable Files Scanner
+
+Find files and directories that anyone can modify:
+
+```bash
+# Find all world-writable files and directories
+fr writable
+
+# Only directories (for backdoor placement)
+fr writable -d
+
+# Only files
+fr writable -f
+
+# Quiet mode for scripting
+fr writable -q
+
+# Verbose with permissions
+fr writable -v
+
+# Search specific path
+fr writable /var
+
+# Save results
+fr writable -o writable_paths.txt
+```
+
+**Common use cases:**
+- Find writable directories for persistence
+- Locate configuration files you can modify
+- Identify temp directories with weak permissions
+
+### Linux Capabilities Scanner
+
+Find files with special capabilities (often overlooked privilege escalation vector):
+
+```bash
+# Find all files with capabilities
+fr caps
+
+# System-wide scan
+fr caps /
+
+# Quiet mode
+fr caps -q
+
+# Verbose output
+fr caps -v
+
+# Save to file
+fr caps -o capabilities.txt
+
+# Check specific directory
+fr caps /usr/bin
+```
+
+**Why this matters:**
+- `cap_setuid` can be used to spawn root shell
+- `cap_dac_override` can read/write any file
+- `cap_sys_admin` can mount filesystems
+- Often missed by standard priv-esc scanners
+
+### Config & Credential Hunter
+
+Find interesting configuration files, credentials, keys, and sensitive data:
+
+```bash
+# Hunt for configs and credentials
+fr configs
+
+# Full system search
+fr configs /
+
+# Quiet mode - just paths
+fr configs -q
+
+# Verbose - show file sizes
+fr configs -v
+
+# Save findings
+fr configs -o interesting_files.txt
+
+# Search home directories
+fr configs /home
+
+# Check /etc for configs
+fr configs /etc
+```
+
+**Searches for:**
+- Configuration files (*.conf, *.cfg, *.ini, *.yaml, *.json)
+- Password files (passwd, shadow, credentials)
+- SSH keys (id_rsa, id_dsa, id_ecdsa, id_ed25519)
+- SSL/TLS certificates and keys (*.pem, *.key, *.crt)
+- Shell config files (.bashrc, .zshrc, .profile)
+- Environment files (.env, *.env)
+- And more...
+
+### Recent Changes Monitor
+
+Detect recently modified files (useful for finding newly created files or changes):
+
+```bash
+# Files modified in last 60 minutes (default)
+fr recent
+
+# Files modified in last 10 minutes
+fr recent -t 10
+
+# Last 24 hours (1440 minutes)
+fr recent -t 1440
+
+# Quiet mode
+fr recent -q
+
+# Verbose - show how long ago
+fr recent -v
+
+# Search from root
+fr recent / -t 30
+
+# Save to file
+fr recent -o recent_changes.txt
+```
+
+**Use cases:**
+- Detect file changes after running exploits
+- Monitor system modifications
+- Find newly created backdoors
+- Track configuration changes
+
+### Dev Null Helper (dn command)
+
+Easily redirect output to /dev/null - no more typing `2>/dev/null` repeatedly:
+
+```bash
+# Hide all output (stdout + stderr)
+fr dn find / -name "*.conf"
+
+# Show errors, hide normal output (stderr visible)
+fr dn -e find / -name "password"
+
+# Works with any command
+fr dn nmap -sV 192.168.1.0/24
+fr dn wget http://example.com/file.txt
+fr dn ping -c 4 google.com
+```
+
+**Equivalent to:**
+```bash
+# fr dn command
+command 2>/dev/null 1>/dev/null
+
+# fr dn -e command  
+command 1>/dev/null
+```
+
+**Why this is useful:**
+- No more "Permission denied" spam
+- Cleaner output when searching system-wide
+- Faster than typing redirection manually
+- Perfect for one-liners
+
+### Pentesting Workflow Examples
+
+**Quick Privilege Escalation Enumeration:**
+```bash
+# One-liner to check common vectors
+fr suid -q > suid.txt && fr sgid -q > sgid.txt && fr caps -q > caps.txt && fr writable -d -q > writable.txt
+
+# Or more verbose for analysis
+fr suid -v
+fr sgid -v
+fr caps -v
+fr writable -v
+```
+
+**Hunt for Credentials:**
+```bash
+# Find interesting files
+fr configs / -o all_configs.txt
+
+# Then grep for juicy stuff
+cat all_configs.txt | grep -i "password\|credential\|secret\|api"
+
+# Or search specific locations
+fr configs /home -v
+fr configs /var/www -v
+fr configs /opt -v
+```
+
+**Monitor System Changes:**
+```bash
+# Before running exploit
+fr recent / -t 5 -q > before.txt
+
+# After running exploit
+fr recent / -t 5 -q > after.txt
+
+# Compare
+diff before.txt after.txt
+```
+
+**Find Writable Paths for Persistence:**
+```bash
+# Find writable directories
+fr writable / -d -q
+
+# Find writable directories in common locations
+fr writable /etc -d
+fr writable /var -d
+fr writable /usr/local -d
+```
+
+**Script Integration:**
+```bash
+#!/bin/bash
+# Quick privilege escalation enumeration script
+
+echo "[*] Scanning for SUID binaries..."
+fr suid -q > /tmp/suid_bins.txt
+
+echo "[*] Scanning for SGID binaries..."
+fr sgid -q > /tmp/sgid_bins.txt
+
+echo "[*] Scanning for capabilities..."
+fr caps -q > /tmp/caps.txt
+
+echo "[*] Finding writable directories..."
+fr writable -d -q > /tmp/writable_dirs.txt
+
+echo "[*] Hunting for credentials..."
+fr configs /home -q > /tmp/home_configs.txt
+fr configs /etc -q > /tmp/etc_configs.txt
+
+echo "[!] Results saved to /tmp/"
+ls -lh /tmp/*.txt
+```
+
+### Pro Tips for Pentesters
+
+1. **Combine with grep for targeted searches:**
+   ```bash
+   fr suid -q | grep -E "nmap|vim|find|less|more|nano"
+   ```
+
+2. **Use quiet mode in scripts:**
+   ```bash
+   SUID_COUNT=$(fr suid -q | wc -l)
+   echo "Found $SUID_COUNT SUID binaries"
+   ```
+
+3. **Save everything to files for later analysis:**
+   ```bash
+   fr suid -o results/suid.txt
+   fr sgid -o results/sgid.txt
+   fr caps -o results/caps.txt
+   ```
+
+4. **Search specific high-value directories first:**
+   ```bash
+   fr configs /home -v     # User configs
+   fr configs /var/www -v  # Web configs
+   fr configs /opt -v      # Third-party apps
+   ```
+
+5. **Use dn for cleaner enumeration:**
+   ```bash
+   fr dn find / -name "*.conf" > configs.txt
+   fr dn find / -type f -perm -4000 > suid.txt
+   ```
+
+---
 
 ### Finding Space Hogs
 
