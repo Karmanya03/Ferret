@@ -213,9 +213,22 @@ pub fn list_files(
     }
 
     if recursive {
-        list_recursive(source_path, show_all, long_format, human_readable, explain_perms, 0)?;
+        list_recursive(
+            source_path,
+            show_all,
+            long_format,
+            human_readable,
+            explain_perms,
+            0,
+        )?;
     } else {
-        list_directory(source_path, show_all, long_format, human_readable, explain_perms)?;
+        list_directory(
+            source_path,
+            show_all,
+            long_format,
+            human_readable,
+            explain_perms,
+        )?;
     }
 
     Ok(())
@@ -239,9 +252,7 @@ fn list_directory(
         return Ok(());
     }
 
-    let mut entries: Vec<_> = fs::read_dir(path)?
-        .filter_map(|e| e.ok())
-        .collect();
+    let mut entries: Vec<_> = fs::read_dir(path)?.filter_map(|e| e.ok()).collect();
 
     entries.sort_by_key(|e| e.file_name());
 
@@ -316,9 +327,7 @@ fn list_recursive(
         );
     }
 
-    let mut entries: Vec<_> = fs::read_dir(path)?
-        .filter_map(|e| e.ok())
-        .collect();
+    let mut entries: Vec<_> = fs::read_dir(path)?.filter_map(|e| e.ok()).collect();
 
     entries.sort_by_key(|e| e.file_name());
 
@@ -360,7 +369,14 @@ fn list_recursive(
         }
 
         if metadata.is_dir() {
-            list_recursive(&entry.path(), show_all, long_format, human_readable, explain_perms, depth + 1)?;
+            list_recursive(
+                &entry.path(),
+                show_all,
+                long_format,
+                human_readable,
+                explain_perms,
+                depth + 1,
+            )?;
         }
     }
 
@@ -448,7 +464,7 @@ fn print_long_entry(path: &Path, human_readable: bool, explain_perms: bool) -> R
 #[cfg(unix)]
 fn format_permissions(mode: u32) -> String {
     use std::os::unix::fs::PermissionsExt;
-    
+
     let file_type = match mode & 0o170000 {
         0o040000 => 'd',
         0o120000 => 'l',

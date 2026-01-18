@@ -442,7 +442,10 @@ fn main() -> Result<()> {
             pentest::find_recently_modified(&path, minutes, quiet, verbose, output)?;
         }
 
-        Commands::Dn { command, show_errors } => {
+        Commands::Dn {
+            command,
+            show_errors,
+        } => {
             use std::process::Command as ProcessCommand;
 
             if command.is_empty() {
