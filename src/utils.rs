@@ -345,26 +345,24 @@ fn list_recursive(
         if long_format {
             print!("{}", indent);
             print_long_entry(&entry.path(), human_readable, explain_perms)?;
+        } else if metadata.is_dir() {
+            println!("{}{}/", indent, name.cyan().bold());
+        } else if metadata.is_symlink() {
+            println!("{}{}", indent, name.purple());
         } else {
-            if metadata.is_dir() {
-                println!("{}{}/", indent, name.cyan().bold());
-            } else if metadata.is_symlink() {
-                println!("{}{}", indent, name.purple());
-            } else {
-                #[cfg(unix)]
-                {
-                    use std::os::unix::fs::PermissionsExt;
-                    let mode = metadata.permissions().mode();
-                    if mode & 0o111 != 0 {
-                        println!("{}{}", indent, name.green().bold());
-                    } else {
-                        println!("{}{}", indent, name);
-                    }
-                }
-                #[cfg(not(unix))]
-                {
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
+                let mode = metadata.permissions().mode();
+                if mode & 0o111 != 0 {
+                    println!("{}{}", indent, name.green().bold());
+                } else {
                     println!("{}{}", indent, name);
                 }
+            }
+            #[cfg(not(unix))]
+            {
+                println!("{}{}", indent, name);
             }
         }
 
@@ -463,8 +461,6 @@ fn print_long_entry(path: &Path, human_readable: bool, explain_perms: bool) -> R
 
 #[cfg(unix)]
 fn format_permissions(mode: u32) -> String {
-    use std::os::unix::fs::PermissionsExt;
-
     let file_type = match mode & 0o170000 {
         0o040000 => 'd',
         0o120000 => 'l',
