@@ -113,7 +113,7 @@ source ~/.bashrc
 **Verify it worked:**
 ```bash
 which fr          # Should show: /home/username/.cargo/bin/fr
-fr --version      # Should show: fr 0.1.0
+fr --version      # Should show: fr 0.1.1
 ```
 
 ### Upgrading
@@ -279,7 +279,7 @@ fr find "*" -t symlink
 | `fr caps` | Find files with capabilities (pentesting) |
 | `fr configs` | Hunt for credentials/configs (pentesting) |
 | `fr recent` | Find recently modified files (pentesting) |
-| `fr dn CMD` | Run command with /dev/null redirect |
+| `fr dn CMD` | Run command (optional output control) |
 
 **Common Find Patterns**
 
@@ -529,7 +529,7 @@ Ferret now includes powerful security enumeration tools designed for pentesters,
 | `fr caps` | Find files with capabilities | Linux capabilities abuse |
 | `fr configs` | Find interesting config files | Credentials, keys, passwords |
 | `fr recent` | Find recently modified files | Detect recent system changes |
-| `fr dn` | Dev null helper | Easy output redirection |
+| `fr dn CMD` | Run command (optional output control) | Execute with optional redirection |
 | `fr ls` | List directory contents | Like ls but with colors |
 
 ### List Command (ls)
@@ -776,28 +776,47 @@ fr recent -o recent_changes.txt
 
 ### Dev Null Helper (dn command)
 
-Easily redirect output to /dev/null - no more typing `2>/dev/null` repeatedly:
+Quick command executor with optional output redirection. By default, shows all output like normal - add flags to suppress output when needed:
 
 ```bash
-# Hide all output (stdout + stderr)
+# Run command normally (shows all output)
 fr dn find / -name "*.conf"
+fr dn find / -type f -perm -4000
 
-# Show errors, hide normal output (stderr visible)
-fr dn -e find / -name "password"
+# Hide stdout only
+fr dn -s find / -name "password"
+
+# Hide stderr only (suppress errors)
+fr dn -e find / -name "*.conf"
+
+# Hide all output (quiet mode)
+fr dn -q nmap -sV 192.168.1.0/24
 
 # Works with any command
-fr dn nmap -sV 192.168.1.0/24
-fr dn wget http://example.com/file.txt
+fr dn ls -la /root
+fr dn cat /etc/shadow
 fr dn ping -c 4 google.com
 ```
 
+**Flags:**
+- No flags = Show all output (normal behavior)
+- `-s` / `--hide-stdout` = Hide stdout, show stderr
+- `-e` / `--hide-stderr` = Hide stderr, show stdout  
+- `-q` / `--quiet` = Hide all output (both stdout and stderr)
+
 **Equivalent to:**
 ```bash
-# fr dn command
-command 2>/dev/null 1>/dev/null
+# fr dn command (default)
+command
 
-# fr dn -e command  
+# fr dn -s command
 command 1>/dev/null
+
+# fr dn -e command
+command 2>/dev/null
+
+# fr dn -q command
+command 2>/dev/null 1>/dev/null
 ```
 
 **Why this is useful:**

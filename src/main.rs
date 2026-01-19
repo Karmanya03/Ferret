@@ -270,15 +270,23 @@ enum Commands {
         output: Option<String>,
     },
 
-    /// 🔥 Quick command shortcuts (pipe output to /dev/null easily)
+    /// 🔥 Quick command execution (run commands directly, optionally redirect output)
     Dn {
         /// Command to run (e.g., "find / -name *.conf")
         #[arg(required = true, trailing_var_arg = true, allow_hyphen_values = true)]
         command: Vec<String>,
 
-        /// Show errors (stderr), hide stdout
+        /// Hide stdout (redirect to /dev/null)
+        #[arg(short = 's', long)]
+        hide_stdout: bool,
+
+        /// Hide stderr (redirect to /dev/null)
         #[arg(short = 'e', long)]
-        show_errors: bool,
+        hide_stderr: bool,
+
+        /// Hide all output (both stdout and stderr)
+        #[arg(short = 'q', long)]
+        quiet: bool,
     },
 
     /// List files in directory (like ls command)
@@ -444,7 +452,9 @@ fn main() -> Result<()> {
 
         Commands::Dn {
             command,
-            show_errors,
+            hide_stdout,
+            hide_stderr,
+            quiet,
         } => {
             use std::process::Command as ProcessCommand;
 
@@ -459,13 +469,18 @@ fn main() -> Result<()> {
             }
 
             // Redirect based on flags
-            if show_errors {
-                // Hide stdout, show stderr: command 1>/dev/null
-                cmd.stdout(std::process::Stdio::null());
-            } else {
-                // Hide both: command 2>/dev/null (or both)
+            if quiet {
+                // Hide both stdout and stderr
                 cmd.stdout(std::process::Stdio::null())
                     .stderr(std::process::Stdio::null());
+            } else {
+                if hide_stdout {
+                    cmd.stdout(std::process::Stdio::null());
+                }
+                if hide_stderr {
+                    cmd.stderr(std::process::Stdio::null());
+                }
+                // If neither flag is set, output is inherited (shows normally)
             }
 
             match cmd.status() {
