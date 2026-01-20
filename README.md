@@ -1226,8 +1226,7 @@ Planning for future releases:
 - **Trash/recycle bin support** - Safe file deletion with recovery
 - **More search operators** - Advanced filtering and queries
 - **More Advanced Regex options** - Enhanced pattern matching capabilities
-- **Plugin system** - Extensible architecture for custom tools
-- **Cloud storage integration** - Support for S3, Google Drive, Dropbox, etc.
+- **Windows-specific privilege checks, ACL Checks and CI/CD For Windows Hosts with proper support**
 
 ---
 
